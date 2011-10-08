@@ -26,13 +26,17 @@ module Guard
     end
     def run_on_change(paths)
       paths.each do |path|
-        content = render File.read(path)
-        open(build_path(path), 'w') do |file|
-          @slim[:pretty] ?
-            file.puts(content) :
-            file.write(content)
+        begin
+          content = render File.read(path)
+          open(build_path(path), 'w') do |file|
+            @slim[:pretty] ?
+              file.puts(content) :
+              file.write(content)
+          end
+          UI.info "Guard-Slim: Rendered #{ path } to #{ build_path path }"
+        rescue StandardError => error
+          UI.info "Slim Error: " + error.message
         end
-        UI.info "Guard-Slim: Rendered #{ path } to #{ build_path path }"
       end
     end
 
